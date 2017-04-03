@@ -1,0 +1,11 @@
+#!/bin/rc
+
+rfork e
+
+z=`{basename $0}
+if (! ~ $#* 0) {
+	echo >[1=2] usage: /$z
+	exit usage
+}
+
+cat /raid/cachecheck | grep -v '^eccheck'

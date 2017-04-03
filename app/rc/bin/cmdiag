@@ -1,0 +1,319 @@
+#!/bin/rc
+
+rfork e
+
+sr=/raid
+
+fn usage {
+	echo >[1=2] usage: cmdiag [-f] 
+	exit usage 
+}
+
+force=0
+burnin=0
+while (~ $1 -*) {
+	switch ($1) {
+	case -f
+		force=1
+	case *
+		usage
+	}
+	shift
+}
+if (! ~ $#* 0)
+	usage
+
+d=/dev/sdS0
+if (! test -f $d/ctl) {
+	echo >[1=2] No CacheMotion card
+	exit nodiag
+}
+luns=()
+for (lun in $sr/[0-9]*) {
+	if (test -w $lun/ctl) {
+		stat=`{cat $lun/stat | awk '{print $2}'}
+		if (~ $stat online)
+			luns=($luns $lun)
+	}
+}
+if (! ~ $#luns 0) {
+	echo >[1=2] Cannot run diagnostics with online LUNs
+	exit nodiag
+}
+if (~ $force 0) {
+	echo These diagnostics will require a reboot when finished.
+	echo -n Are you sure you want to perform this action? 'y/n? [N] '
+	if (! ~ `{read} [Yy])
+		exit nodiag
+}
+
+tests=()
+
+# We do something sneaky here; teststart will set a variable with
+# the current test name.  This is abused by testpass/testfail to
+# record test results.  Tests should never use this variable or
+# risk certain doom.
+fn teststart {
+	_test=$1
+	echo Running Test: $_test
+}
+
+fn testpass {
+	echo Test Result: PASS
+	passed=($passed $_test)
+}
+
+fn testfail {
+	echo Test Result: FAIL 
+	failed=($failed $_test)
+}
+
+fn testsummary {
+	echo
+	echo Test Summary:
+	for (t in $passed)
+		echo $t: PASS
+	for (t in $failed)
+		echo $t: FAIL
+
+	echo -n Overall Result:' '
+	if (~ $#failed 0)
+		echo PASS
+	if not
+		echo FAIL
+}
+
+fn testall {
+	for (t in $tests){
+		# We don't want to run poetest during burn-in
+		# as it require additional operator input
+		if (~ $t poetest){
+			if (~ $burnin 0)
+				eval $t
+		}
+		if not
+			eval $t
+	}
+}
+
+tests=($tests pcitest)
+fn pcitest {
+	teststart pcitest
+	bdf=`{pci | awk -F: '/1b52\/5121/{print $1}'}
+	if (! ~ $bdf '' )
+		testpass
+	if not {
+		echo CacheMotion card not online
+		testfail
+	}
+}
+
+tests=($tests memdiskquicktest)
+fn memdiskquicktest {
+	teststart memdiskquicktest
+	f=/tmp/disk.bin
+	dd -quiet 1 -if /dev/random -of $f -bs 512 -count 1
+	dd -quiet 1 -if $f -of $d/data -bs 512 -count 1
+	ret=`{cmp $d/data $f}
+	if (~ $ret '' || ~ $ret EOF*)
+		testpass
+	if not {
+		echo $ret
+		testfail
+	}
+}
+
+tests=($tests memdiskfulltest)
+fn memdiskfulltest {
+	teststart memdiskfulltest
+	f=/tmp/disk.bin
+	gen | dd -quiet 1 -of $f -bs 1024k -count 1
+	off=0
+	bail=0
+	while (! ~ $off 3580 && ! ~ $bail 1) {
+		dd -quiet 1 -if $f -of $d/data -bs 1024k -count 1 -oseek $off
+		skip=`{hoc -e $off'*1024*1024'}
+		ret=`{cmp $d/data $f $skip}
+		if (~ $ret '' || ~ $ret EOF*)
+			off=`{hoc -e $off'+1'}
+		if not
+			bail=1
+	} 
+	if (! ~ $bail 1)
+		testpass
+	if not {
+		echo $ret
+		testfail
+	}
+}
+
+tests=($tests supercapchargetest)
+fn supercapchargetest {
+	teststart supercapchargetest
+	sclvl1=0
+	sclvl2=0
+	sclvldf=0
+	sclvl1=`{awk '/sclvl/{print $2}' $d/ctl}
+	sleep 3 
+	if (~ $sclvl1 0) {
+		echo SuperCap is not connected
+		testfail
+	}
+	if not {
+		sclvl1=`{echo 16i $sclvl1 p | tr a-f A-F | dc}
+		psmstat=`{awk '/psmstate/{print $2}' $d/ctl}
+		ret=`{hoc -e $sclvl1'>18448'}
+		if (~ $ret 1 && ~ $psmstat 6)
+			testpass
+		if not {
+			sleep 3 
+			sclvl2=`{awk '/sclvl/{print $2}' $d/ctl}
+			sclvl2=`{echo 16i $sclvl2 p | tr a-f A-F | dc}
+			sclvldf = `{hoc -e $sclvl2-$sclvl1}
+			ret=`{hoc -e $sclvldf'>50'}
+			if (~ $ret 1)
+				testpass
+			if not {
+				echo $ret
+				testfail
+			}
+		}
+	}
+}
+
+tests=($tests supercapthresholdtest)
+fn supercapthresholdtest {
+	teststart supercapthresholdtest
+	sclvl=0
+	sclvl=`{awk '/sclvl/{print $2}' $d/ctl}
+	if ( ~ $sclvl 0 ) {
+		echo SuperCap is not connected
+		testfail
+	}
+	if not {
+		sclvl=`{echo 16i $sclvl p | tr a-f A-F | dc}
+		psmstat=`{awk '/psmstate/{print $2}' $d/ctl}
+		ret=`{hoc -e $sclvl'>18448'}  #0x4810
+		if (~ $ret 1 && ~ $psmstat 6)
+			testpass
+		if not {
+			echo 'psmstat = '$psmstat
+			echo $ret
+			testfail
+		} 
+	}
+}
+
+# This test appears to be a no-op; eccaddr is cleared by
+# sdslrp and never modified. Abandon hope ye who enter here.
+tests=($tests ecctest)
+fn ecctest {
+	teststart ecctest
+	eccaddr=`{awk '/eccaddr/{print $2}' $d/ctl}
+	if (~ $eccaddr 0)
+		testpass
+	if not {
+		echo ECC address is $eccaddr
+		testfail
+	}
+}
+
+tests=($tests poetest)
+fn poetest {
+	echo The first port on the CacheMotion card should be connected
+	echo to the second port of CacheMotion card for PoE testing.
+	echo -n Press return to begin testing:' '
+	read
+
+	teststart poetest
+	poe=(poe1) 
+	for (p in $poe) {
+		poev=`{awk /$p/'{print $2}' $d/ctl}
+		if (! ~ $poev 0 && ! ~ $poev '')
+			testpass
+		if not {
+			echo $p is not connected
+			testfail
+		}
+	}
+}
+
+tests=($tests loopbacktest)
+fn loopbacktest {
+	if (~ $burnin 0) {
+		echo The second port on the CacheMotion card should be connected
+		echo to the second port of the appliance for loopback testing.
+		echo -n Press return to begin testing:' '
+		read
+	}
+
+	teststart loopbacktest
+	echo stopallether > $sr/ctl
+	if(cmaoetest)
+		testpass
+	if not
+		testfail
+}
+
+fn boardinfo {
+	echo Board Info:
+	echo serial: `{awk '/serial/{print $2}' $d/ctl}
+	echo ether0: `{awk '/mac0/{print $2}' $d/ctl}
+	echo ether1: `{awk '/mac1/{print $2}' $d/ctl}
+	echo firmware: `{awk '/firmware/{print $2}' $d/ctl}
+}
+
+while () {
+	passed=()
+	failed=()
+	echo
+	echo CacheMotion Diagnostics
+	echo 1 - PCI Test
+	echo 2 - Memdisk Quick Test
+	echo 3 - Memdisk Full Test
+	echo 4 - SuperCap Charge Test
+	echo 5 - SuperCap Threshold Test
+	echo 6 - ECC Test
+	echo 7 - POE Test
+	echo 8 - Ethernet Loopback Test
+	echo A - All Tests
+	echo B - Burn In Test
+	echo I - Board Info
+	echo R - Reboot
+	echo
+	echo -n Your choice:' '
+	switch (`{read}) {
+	case 1
+		pcitest
+	case 2
+		memdiskquicktest
+	case 3
+		memdiskfulltest
+	case 4
+		supercapchargetest
+	case 5
+		supercapthresholdtest
+	case 6
+		ecctest
+	case 7
+		poetest
+	case 8
+		loopbacktest
+	case [Aa]
+		testall
+		testsummary
+	case [Bb]
+		burnin=1
+		echo -n Enter number of passes:' '
+		for (i in `{seq 1 `{read}})
+			testall
+		burnin=0
+		testsummary
+	case [Ii]
+		boardinfo
+	case [Rr]
+		reboot -f
+	case !
+		exit ''
+	}
+}

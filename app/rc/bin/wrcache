@@ -1,0 +1,31 @@
+#!/bin/rc
+# Copyright © 2011 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+rd=/raiddev
+
+fn usage {
+	echo >[1=2] usage: wrcache '[ on | off ]'
+	exit usage
+}
+
+switch ($#*) {
+case 0
+     usage
+case 1
+     switch ($1) {
+     case on off
+          e = `{ set wrcache $1 >$rd/ctl }
+          if (! ~ $#e 0) {
+		echo >[1=2] error: $e
+                exit wrcachefailure
+          }
+     case *
+          usage
+     }
+case *
+     usage
+}
+

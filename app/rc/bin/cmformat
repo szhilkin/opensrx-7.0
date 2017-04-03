@@ -1,0 +1,31 @@
+#!/bin/rc
+
+rfork e
+
+blksize=4096
+sr=/raid
+
+if (~ $#* 1 && ~ $1 '-b')
+	blksize=8192
+if not if (! ~ $#* 0) {
+	echo 'usage: cmformat'
+	exit usage
+}
+
+if (! test -e '#S/sdS0') {
+	echo 'error: no CacheMotion card' >[1=2]
+	exit 'no cache'
+}
+
+echo 'Formatting the cache will destroy any data it contains'
+echo 'Are you sure you want to format the cache? (yes or no)'
+ans=`{read}
+
+if (! ~ $ans 'yes')
+	exit
+echo 'Formatting the cache'
+
+sz=`{ls -l '#S/sdS0/data' | awk '{print $6}'}
+echo ecream 0 '#S/sdS0/data' $blksize 0 $sz > $sr/ctl
+
+echo 'Done formatting'

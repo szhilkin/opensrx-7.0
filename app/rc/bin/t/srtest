@@ -1,0 +1,21 @@
+#!/bin/rc
+# Copyright © 2013 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+fn sigcheck {
+	if (test -r '#§'/sig/flash)
+		echo Signature is valid.
+	if not
+		echo error: Invalid signature.
+}
+
+echo >[1=2] Entering SRX Unit Testing.
+
+echo Model: $model
+echo Checking flash signature ... `{sigcheck}
+ifstat
+
+echo >[1=2] Starting t/scan to check SATA cable wiring.
+t/scan

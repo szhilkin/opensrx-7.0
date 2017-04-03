@@ -1,0 +1,2 @@
+The cecdisable command is used to disable cec on an Ethernet interface.  The interface should be specified in the format of "ether" followed by a digit.  Series ranging (see 'help series') may be used to specify interfaces:
+cecdisable ether0-1

@@ -1,0 +1,4 @@
+The luns command displays the LUNs configured on the SRX.  With a -a option,
+the LUNs and component drive states are displayed.
+
+If no LUNs are specified, all LUNs on the shelf are displayed.

@@ -1,0 +1,1 @@
+The fclunpriority command allows you to specify relative priority, 0 (lowest) through 100 (highest), of a LUN with respect to the flash cache usage and the approximate minimum percentage (0-100) of the cache targeted for the specified LUN.

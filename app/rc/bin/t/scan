@@ -1,0 +1,41 @@
+#! /bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+rd=/raiddev
+
+zero=`{basename $0}
+for (p in `{ps | grep $zero | awk '{print $2}'}) {
+	# to ensure we're actually checking for existence of this
+	# poorly named command and not some other command
+	# with scan as a subset, pull the name out of the proc
+	# status file.  Status might not actually exist because the
+	# subshell used above to get the ps listing also appears
+	# as scan.
+	if (test -r /proc/$p/status)
+		name=`{sed 1q /proc/$p/status >[2]/dev/null | awk '{print $1}'}
+	if not
+		name=notscan
+	if (test $name '=' $zero && ! ~ $p $pid) {
+		echo >[1=2] scan is already running as pid $p.  Exiting.
+		exit running
+	}
+}
+
+# turn on debugging so mfg has something to report in error cases
+echo debug on >$rd/ctl
+# disable the sense timer to speed up insertion/removal tests
+echo sensetimeo 0 >$rd/ctl >[2]/dev/null
+
+while (sleep 1) {
+	for (i in `{ grep up $rd/*/stat | awk -F/ '{print $3}' }) {
+		echo slot $i is up
+		setslotled locate $i >/dev/null >[2=1]
+		dd -if $rd/$i/data -of /dev/null -bs 1024k >/dev/null >[2=1]
+	}
+} &
+
+if (! ~ $#* 0)
+	wait

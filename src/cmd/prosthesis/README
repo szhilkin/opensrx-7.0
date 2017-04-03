@@ -1,0 +1,17 @@
+This is code that can be used to add things to a name space.
+
+It's a simple one level file filesystem that can append to
+a directory where you need more ctl entries.  It is also
+a good example of a user level file server.
+
+  Brantley
+ 
+model		read-only
+extractl	{ reboot, halt, update },
+update		read/write ram file that holds update tarc
+shelf		read/write
+
+RTB added:
+sos		read-only (now deprecated & not available)
+remove		read/write (removes a given lun)
+

@@ -1,0 +1,29 @@
+#!/bin/rc
+# Copyright © 2014 Coraid, Inc.
+# All rights reserved.
+#
+
+rfork e
+
+fn usage {
+	echo >[1=2] usage: srxacid pid
+	exit usage
+}
+
+switch ($#*) {
+case 1
+	if(~ $1 '-?')
+		usage
+	pid = $1
+case *
+	usage
+}
+
+cd /tmp
+if (! test -r devsr.acid) {
+	gunzip < /lib/devsr.acid.gz > devsr.acid
+}
+echo
+echo 'Reminder: run kinit() first!'
+echo
+exec acid -k -lkernel -lmach -ldevsr.acid $pid /dev/sdC0/kernel

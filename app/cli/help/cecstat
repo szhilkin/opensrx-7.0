@@ -1,0 +1,2 @@
+The cecstat command is used to display the cec status for the Ethernet interfaces.  cecstat displays whether cec is enabled or disabled for each Ethernet interface.
+

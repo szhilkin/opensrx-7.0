@@ -1,0 +1,18 @@
+#!/bin/rc
+# Copyright © 2013 Coraid, Inc.
+# All rights reserved.
+#
+
+rfork e
+
+fn usage {
+	echo >[1=2] usage: ssdhealth
+	exit usage
+}
+
+if (! ~ $#* 0)
+	usage;
+
+drives -S
+
+exit

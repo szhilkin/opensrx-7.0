@@ -1,0 +1,47 @@
+
+# init kernel cec server
+cecinit
+
+echo Booting $model' ('$release')'
+
+# devrd disk subsystem
+rdinit
+
+# devsr raid subsystem
+raidinit
+
+# local commands for developer customization prior to restore (eg: turn rdfail on)
+f=/n/kfs/srx/srlocal0
+if (test -r $f) {
+	echo >[1=2] Sourcing local script $f
+	. $f
+}
+
+# launch prosthesis
+prosthesis >/dev/null >[2=1] &
+waitfile /srv/prosthesis
+mount /srv/prosthesis /n/prosthesis
+
+# restore the raid/lun configurations from disk config
+echo -n Reading config information from drives ...' '
+restorelun
+echo done.
+
+# additional dev knobs to configure behavior
+knobinit
+
+# start the smart monitor
+{ smartmon >[2]/dev/null | tee /dev/syslog }&
+
+# start the disk led state monitor
+diskledmon &
+
+# local commands for developer customization (eg: turn debug on)
+f=/n/kfs/srx/srlocal
+if (test -r $f) {
+	echo >[1=2] Sourcing local script $f.
+	. $f
+}
+
+# namespace version - used for json parsing
+echo -n 1 > '#ec/nsversion'

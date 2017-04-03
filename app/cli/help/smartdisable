@@ -1,0 +1,2 @@
+The smartdisable command disables the SMART command features on a drive.  This is useful when an administrator no longer wants to be notified about a drive exceeding an error threshold. Coraid recommends always enabling SMART on devices in the SRX.
+Note: SMART is only available on SATA-connected drives (HDD and SSD).

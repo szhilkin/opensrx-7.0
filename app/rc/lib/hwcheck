@@ -1,0 +1,11 @@
+
+fn apphwcheck {
+	switch ($model) {
+	case SRX4200* SR4200*
+		# count pcie marvell 3G cards installed
+		cards=`{grep 11ab/6485 '#$/pci/'*ctl | wc -l}
+		if (! ~ $cards 5)
+			hwerr='Not enough storage controllers.'
+	case *
+	}
+}

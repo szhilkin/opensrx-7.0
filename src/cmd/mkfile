@@ -1,0 +1,99 @@
+<$app/src/mkhdr
+
+# keep me sorted
+TARG=\
+	arp\
+	cecenable\
+	cecdisable\
+	cecstat\
+	clrvlan\
+	cmaoetest\
+	cmdisable\
+	cmenable\
+	cminit\
+	cmlunid\
+	cmrecover\
+	cmstat\
+	condition\
+	drives\
+	drivetemp\
+	dt\
+	ejectlun\
+	emi-cmstress\
+	emi-diskstress\
+	erctimers\
+	extract\
+	faildrive\
+	fcadd\
+	fcstat\
+	fclundisable\
+	fclunenable\
+	fclunpriority\
+	fclunstat\
+	fcremove\
+	flushcachedisable\
+	flushcacheenable\
+	flushcachestat\
+	fmtsz\
+	gen\
+	glob\
+	glob0\
+	glob2\
+	iomode\
+	iostats\
+	iotest\
+	label\
+	lunfailguard\
+	lunfailguarddisable\
+	lunfailguardenable\
+	lunreservations\
+	luns\
+	mask\
+	mkjbod\
+	mklun\
+	mkspare\
+	offline\
+	online\
+	ratelimit\
+	replacedrive\
+	resetserial\
+	rmlun\
+	rrestore\
+	rmspare\
+	secureerase\
+	setiomode\
+	setsize\
+	setslotled\
+	setvlan\
+	slotled\
+	smartdisable\
+	smartenable\
+	smartlog\
+	smartmon\
+	spares\
+	unlabel\
+	vlans\
+	when\
+
+HFILES= $app/src/libsrxcmds/srxcmds.h\
+
+LIB= $app/src/libsrxcmds/libsrxcmds.a\
+
+<$coros/src/mkcmd
+
+CFLAGS=-I$app/src/libsrxcmds $CFLAGS
+
+$O.cmrecover:	cmrecover.$O aoe.$O
+	$LD $LDFLAGS -o $target $prereq
+
+$O.emi-cmstress: emi-cmstress.$O aoe.$O
+	$LD $LDFLAGS -o $target $prereq
+
+$O.cmaoetest: cmaoetest.$O aoe.$O
+	$LD $LDFLAGS -o $target $prereq
+
+$O.mkjbod: mkjbod.$O mklunutil.$O
+	$LD $LDFLAGS -o $target $prereq $LIB
+
+$O.mklun: mklun.$O mklunutil.$O
+	$LD $LDFLAGS -o $target $prereq $LIB

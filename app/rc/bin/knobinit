@@ -1,0 +1,26 @@
+#!/bin/rc
+
+rfork e
+
+store=/n/kfs/srx
+sr=/raid
+
+fn fvalid {
+	test -r $1 && test -s $1
+}
+
+# set buffer cache write behind mode.  This is not useful except in testing.
+f=$store/async
+if (fvalid $f) {
+	e=`{ set >[2=1] async `{ cat $f } >$sr/ctl }
+	if (! ~ $#e 0)
+		echo >[1=2] async state restoration failed: $e
+}
+# force rate limiting in parity rebuilds and disk reconstruction
+f=$store/ratelimit
+if (fvalid $f) {
+	e=`{ set >[2=1] rlrate `{ cat $f } >$sr/ctl }
+	if (! ~ $#e 0)
+		echo >[1=2] ratelimit state restoration failed: $e
+}
+

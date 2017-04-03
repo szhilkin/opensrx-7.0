@@ -1,0 +1,18 @@
+This is the source for the Coraid SRX provided by the previous owners
+of the technology.  Apparently, the Coraid infrastructure required to
+build release were lost in the turmoil after the reduction in force in
+January of 2015.  All internal documentation on how to build the
+software was reportedly kept on web based wikis that disappeared.  The
+code that was provided us appears to be missing the last version of
+the SRX, 7.1.  It is no longer possible to create relases as it was at
+Coraid in 2014.
+
+But the main parts of the SRX are here.  The main code is in
+src/9/devsr.c, the heart of the SRX.  It implements the AoE target as
+well as the RAID code.  It, and the others, are drivers for a Plan 9
+kernel that can be loaded from other sources on the network.  One
+should be able to combine into current versions of Plan 9 and, with
+some work, get an SRX like system.
+
+  Brantley
+ 

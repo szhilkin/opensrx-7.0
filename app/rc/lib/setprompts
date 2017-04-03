@@ -1,0 +1,9 @@
+
+fn setcliprompt {
+	shelf=`{cat /n/kfs/srx/shelf >[2]/dev/null}
+	if (~ $#shelf 0)
+		shelf=unset
+	echo -n $product^' shelf '^$shelf^'> ' >$clipromptfile
+	echo -n $shelf > '#ec/shelf'
+	echo syslogprefix > /n/sys/ctl
+}

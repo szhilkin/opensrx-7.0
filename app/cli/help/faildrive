@@ -1,0 +1,2 @@
+The fail command marks a drive that is part of a LUN as failed.  This command may be used to test how an SRX behaves in a failure condition.
+

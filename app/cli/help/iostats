@@ -1,0 +1,2 @@
+The iostats command displays throughput and latency information for configured LUNs and the drives backing them. The MB/s, average latency, and maximum latency for reads and writes are displayed. The -s flag followed by a number between 1 and 32 specifies the number of seconds in the past to pull statistics. The default value is four seconds. The -d flag displays throughput and latency information for the drives. The -l flag displays throughput and latency information for the LUNs.
+Series ranging (see 'help series') may be used to specify LUNs: iostats 0-10

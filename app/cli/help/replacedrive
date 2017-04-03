@@ -1,0 +1,2 @@
+The replace command replaces a failed component in RAID 1, RAID 5, RAID 6, and RAID 10 LUNs with a drive not in use. After the failed drive has been replaced, the RAID is reconstructed. The replacement drive you specify must be listed when you issue the drives command, not in a failed state, and not in use as a spare or RAID component, with one exception: it is permissible to replace a RAID component with itself to force recovery of the existing component drive.
+

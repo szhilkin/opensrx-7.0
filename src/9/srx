@@ -1,0 +1,85 @@
+# dirs is relative to the recipe directory, so include files here.
+
+dirs
+	.
+
+dev
+	root
+	arch
+	dump
+	cap
+	cons
+	cec
+	dup
+	ec
+	el		el elarp
+	env
+	ether		netif
+	ip		arp chandial ip ipv6 ipaux iproute netlog nullmedium pktmedium ptclbsum386 inferno
+	kprof
+	mnt
+	pnp		pci smbus
+	ipmi		acpi
+	pipe
+	proc
+	ram
+	rd
+	rtc
+	sd
+	sig
+	sr
+	srv
+	ssl
+	tls
+	uart
+	usb
+	kbin
+	events
+
+link
+	realmode
+	etherigbe	pci	ethermii
+	ether82563	pci
+	ether82598	pci
+	ethermedium
+	loopbackmedium
+	usbuhci
+	usbohci
+	usbehci
+
+misc
+	archmp		mp nomp mpacpi acpi apic hpet msi
+
+	uarti8250
+
+	sdide		pci sdscsi
+	sdslrp		pci sdscsi
+	rdodin		pci ibpi
+	rdmpt2		pci
+
+ip
+	il
+	tcp
+	udp
+	ipifc
+	icmp
+	icmp6
+	gre
+	ipmux
+	esp
+
+port
+	int cpuserver = 1;
+
+boot cpu
+	il
+	local
+
+bootdir
+	bootsrx.out boot
+	../../../root/386/bin/ip/ipconfig ipconfig
+	../../../root/386/bin/auth/factotum
+	../../../root/386/bin/paqfs
+	../../../root/386/bin/ramfs
+
+

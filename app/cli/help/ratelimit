@@ -1,0 +1,1 @@
+The ratelimit command sets or displays the rate limit for drive rebuild and parity initialization.  A valid rate limit value is a number inclusively between 0 and 2G.

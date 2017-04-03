@@ -1,0 +1,13 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+# eject lun
+#
+# this script should only be invoked through the prosthesis filesystem.
+# do not invoke this script directly from the command line.
+# it similar to but not quite the same as the eject command.
+
+if (~ $#* 0 || ~ $1 '-?')
+	exit 'usage; eject lun ...'
+
+premove -s $*

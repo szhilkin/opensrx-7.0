@@ -1,0 +1,6 @@
+The fclunstat command displays the read cache status, relative priority, minimum percentage, percentage of cache used, total hit rate and recent hit rate of all LUNs on the shelf. The status field is either enabled or disabled for the LUN. The priority field indicates the relative priority of the LUN on a scale of 0-100, 100 being the highest. The minpct field is the minimum percentage of cache to be used for the LUN. These values serve as a guideline when allocating cache buffers. Actual values may differ. The total hit rate is the ratio of the number of cache hits and the number of IOs since bootup or since cache was enabled on the LUN, whichever is later. The recent hit rate is a weighted hit rate with newer cache hits/misses having larger weights.
+
+If the total hit rate and the recent hit rate are low, the cache may still be warming up.
+If the recent hit rate is lower than the total hit rate, traffic patterns on the LUN could be changing, causing more cache misses in the recent past.
+If the recent hit rate is higher than the total hit rate, the cache has warmed up.
+In a steady state, the total hit rate and the recent hit rate will be close to each other.

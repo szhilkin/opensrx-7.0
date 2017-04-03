@@ -1,0 +1,29 @@
+#!/bin/rc
+
+rfork e
+
+sr=/raid
+rr=/n/rr
+
+# stallion note - rrfs will not post a descriptor (or call
+# postmountsrv for that matter) until the journal has been read. There will
+# be no race. There is a small race if -m is passed - rrfs can exit before
+# the mount completes.
+
+rrfs -s rrfs /n/kfs/srx/rrfs
+waitfile /srv/rrfs
+mount /srv/rrfs $rr
+bind '#√' $sr
+echo rrfs $rr >$sr/ctl
+
+# start ethernet SAN interfaces
+ifcs=`{ cat '#ec'/aoeifcs }
+for (e in /net/^$ifcs)
+	echo startether $e >$sr/ctl
+
+sh=`{cat /n/kfs/srx/shelf >[2]/dev/null}
+if (! ~ $#sh 0)
+	echo shelf -r $sh >$sr/ctl
+
+# restore spareled state
+ledctl -r

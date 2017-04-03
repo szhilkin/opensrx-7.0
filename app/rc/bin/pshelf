@@ -1,0 +1,38 @@
+#!/bin/rc
+# Copyright © 2013 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+sr=/raid
+cfg=/n/kfs/srx/shelf
+sh=`{ cat $cfg >[2]/dev/null }
+if (~ $sh '')
+	sh=unset
+switch ($#*) {
+case 0
+	echo $sh
+case 1
+	sh=$1
+	if(! ~ $sh `{echo $sh | sed 's/[^0-9]//g'} || test $sh -gt 65534)
+		exit 'invalid shelf number '$1' [0-65534]'
+	if(~ $sh 0* && ! ~ $sh 0)
+		exit 'invalid shelf number '$1' preceded with zeros'
+	for (lun in $sr/[0-9]*) {
+		if (test -w $lun/ctl) {
+			stat=`{cat $lun/stat | awk '{print $2}'}
+			if (~ $stat online){
+				exit 'cannot change shelf address with online LUNs'
+			}
+		}
+	}
+	set shelf $sh >/dev/cecctl
+	set shelf $sh >$sr/ctl
+	set $sh >$cfg
+	if(test -w /dev/sdS0/ctl) {
+		target=`{grep aoetarget /dev/sdS0/ctl | sed -e 's/^aoetarget [0-9]*\.//'}
+		echo target $sh.$target > /dev/sdS0/ctl
+	}
+	save
+	sys/setprompts
+}

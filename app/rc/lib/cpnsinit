@@ -1,0 +1,30 @@
+
+# $cpns is defined by coros/root/rc/bin/sys/cpnsinit that we're extending
+
+fn appcpnsinit {
+	mkdir -p $cpns^(/prosthesis /raid /raiddev /cache)
+	bind /n/prosthesis $cpns/prosthesis
+	bind /raid $cpns/raid
+	bind /raiddev $cpns/raiddev
+	bind '#ℂ' $cpns/cache
+}
+
+cpnsexclude = $cpnsexclude ^ '
+- prosthesis/sos
+- prosthesis/ctl
+- prosthesis/uptime
+- raid/heap
+- raid/log
+- raid/dstate
+- raid/bufstats
+- raid/[0-9]+/data
+- raid/[0-9]+/model
+- raiddev/events
+- raiddev/extra
+- raiddev/[0-9]+/dump
+- raiddev/[0-9]+/data
+- raiddev/[0-9]+/.*raw
+- raiddev/[0-9]+/alarm
+'
+
+# nssexclude ?

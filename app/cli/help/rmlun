@@ -1,0 +1,1 @@
+The rmlun command removes one or more LUNs. Issuing the rmlun command clears the RAID configuration on the LUN's component drives and releases for reuse all drives used in the component RAID. A LUN must be placed offline before it can be removed (see offline). It is important to note that all data on a LUN will be lost after it is removed.

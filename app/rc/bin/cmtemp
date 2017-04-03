@@ -1,0 +1,8 @@
+#!/bin/rc
+
+if (! test -r /dev/sdS0/ctl) {
+	echo 'error: no CacheMotion card' >[1=2]
+	exit 'nocache'
+}
+
+grep boardtemp /dev/sdS0/ctl

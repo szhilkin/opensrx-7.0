@@ -1,0 +1,20 @@
+<$coros/$objtype/mkhdr
+
+LIB=libsrxcmds.a
+
+OFILES=\
+	ask.$O\
+	cmp.$O\
+	ctl.$O\
+	getshelf.$O\
+	lunlabel.$O\
+	rangecheck.$O\
+	shelfdotslot.$O\
+	shell.$O\
+	srxfile.$O\
+	srxutil.$O\
+	strutil.$O\
+
+HFILES= srxcmds.h\
+
+<$coros/src/mklib

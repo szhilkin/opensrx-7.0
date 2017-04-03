@@ -1,0 +1,7 @@
+The setslotled command sets the state of the red LED at each drive slot. The possible states are:
+
+locate	Red LED blinks rapidly.
+fault	Red LED light remains on (solid).
+reset	Red LED is off.
+rebuild	Red LED is off.
+spare	Red LED remains on (solid) or blinks based on /spareled command.

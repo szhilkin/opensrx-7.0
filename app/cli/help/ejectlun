@@ -1,0 +1,1 @@
+The eject command is used to eject one or more LUNs.  It is similar to the remove command, except eject does not clear the RAID configuration on the component drives of a LUN.  The eject command is useful when you want to physically move the drives in a LUN from one appliance to another without shutting down the SRX appliance.

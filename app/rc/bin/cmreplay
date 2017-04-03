@@ -1,0 +1,31 @@
+#!/bin/rc
+
+rfork e
+
+sr=/raid
+
+if (! ~ $#* 0) {
+	echo 'usage: cmreplay'
+	exit usage
+}
+
+if (! test -e '#S/sdS0') {
+	echo 'error: no CacheMotion card' >[1=2]
+	exit 'no cache'
+}
+
+shouldclose=0
+n=`{sed -e '/Cache level 1/q' $sr/cachecheck | wc | awk '{print $1}'}
+if (test $n -le 5) {
+	shouldclose=1
+	as=`{echo ecattach 0 '#S/sdS0/data' 0 >[2=1] > $sr/ctl}
+	if (! ~ $as '' && ! ~ $as *'cache mismatch') {
+		echo $as
+		exit 'attach failure'
+	}
+}
+
+echo ecreplay 1 > $sr/ctl
+
+if (~ $shouldclose 1)
+	echo ecclose 0 > $sr/ctl

@@ -1,0 +1,1 @@
+The /debug command will turn on/off debug prints appearing on console. Without any arguments it displays the current debug state.

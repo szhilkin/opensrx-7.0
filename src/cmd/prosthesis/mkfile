@@ -1,0 +1,7 @@
+<$app/src/mkhdr
+
+TARG=	prosthesis
+OFILES=	io.$O
+HFILES=	dat.h
+
+<$coros/src/mkcmd

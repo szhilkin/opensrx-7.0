@@ -1,0 +1,2 @@
+The smartenable command enables the SMART command features on a drive. The SMART status (Self Monitoring, Analysis, and Reporting Technology) of drives is displayed when the drives -s command is issued. Enabling SMART is maintained by the drive and persists across power cycles.
+Note: SMART is only available on SATA-connected drives (HDD and SSD).

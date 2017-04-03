@@ -1,0 +1,90 @@
+# Appliance specific commands.
+# Format for regular commands:
+# 	commandname<tab>'quoted description'
+# Format for expertmode commands:
+# 	/commandname<tab>'quoted description'
+# Format for deprecated commands:
+# 	<deprecatedcommandname<tab>replacementcmd1,replacementcmd2...
+# Keep this list sorted.
+# Regular commands first, then expertmode, then deprecated.
+cecdisable	'Disable cec on one or more Ethernet interfaces'
+cecenable		'Enable cec on one or more Ethernet interfaces'
+cecstat	'Display cec status on all Ethernet interfaces'
+clrvlan	'Clears the vlan configured on a LUN'
+drives	'Display drives'
+ejectlun	'Eject one or more LUNs'
+faildrive	'Mark a drive as failed'
+flushcachedisable 'disable cache flush on LUN'
+flushcacheenable 'enable cache flush on LUN'
+flushcachestat 'display flushcache settings for LUN'
+#
+# Uncomment out the FC commands when they are supported again in post 7.0.0
+# Also remember to fix src/cmd/rrestore.c
+#
+# fcadd	'Add drives to EtherFlash Cache'
+# fcstat	'Display the statistics of EtherFlash Cache drives'
+# fclundisable	'Disables the read cache for the specified LUN'
+# fclunenable	'Enables the read cache for the specified LUN'
+# fclunpriority	'Set the EtherFlash Cache priority for the specified LUN'
+# fclunstat	'Display the EtherFlash Cache status and statistics of each LUN'
+# fcremove	'Remove drives from EtherFlash Cache'
+iomode	'Display the I/O mode of LUNs'
+iostats	'Display LUN I/O statistics'
+label	'Set label for a LUN'
+luns	'Display LUNs'
+mask	'Display/Configure LUN MAC mask access list'
+mkjbod	'Create a JBOD'
+mklun	'Create a LUN'
+mkspare	'Make a drive part of the spare pool'
+online	'Enable network access to LUN'
+offline	'Disable network access to LUN'
+replacedrive	'Replace a failed drive in a redundant array'
+restorelun	'Restore LUN configuration'
+rmlun	'Removes one or more LUNs'
+rmspare	'Remove a drive from the spare pool'
+setiomode	'Set the I/O mode for a LUN'
+setslotled	'Set the LED state of the specified drive slot'
+setvlan	'Set a vlan on a LUN'
+shelf	'Display/Configure the shelf address'
+slotled	'Display the LED state of the specified drive slot'
+smartdisable	'Disable SMART command features on a drive'
+smartenable	'Enable SMART command features on a drive'
+spares	'Display drives in the spare pool'
+ssdhealth	'Display the health information on SSDs from SMART'
+unlabel	'Remove label from a LUN'
+vlans	'Display LUNs and their vlan associations'
+when	'Display parity initialization or drive recovery progress'
+# /cmcheck	'Display cache statistics for CacheMotion and EtherFlash caches'
+/condition	'Condition a drive'
+/debug		'Turn on/off console prints'
+/drivetemp	'Display drive temperature'
+/erase	'Destroy all data on all drives'
+/erctimers	'Set or display Error Recovery Control timers'
+/extract	'Copy data from one drive to another drive'
+/lunfailguard	'Display the lunfailguard settings for LUNs'
+/lunfailguarddisable	'Disable lunfailguard for the specified LUNs'
+/lunfailguardenable	'Enable lunfailguard for the specified LUNs'
+/ratelimit	'Set or display rate limit'
+/secureerase	'Secure erase specified drives'
+/setsize	'Set the size of a drive'
+/smartlog	'Read Summary SMART Error Log from SATA drives'
+/spareled	'Control the LED state on drive slots for the spare pool'
+/sync	'Flush memory cache to disks'
+<cecoff	cecdisable,cecstat
+<cecon	cecenable,cecstat
+<disks	!drives
+<eject	!ejectlun
+<fail	!faildrive
+# <fcconfig	!fcadd
+# <fcdisable	!fclundisable
+# <fcenable	!fclunenable
+# <fcpriority	!fclunpriority
+<jbod	!mkjbod
+<list	!luns
+<make	!mklun
+<remove	!rmlun
+<replace	!replacedrive
+<restore	!restorelun
+# <rmfcache	fcremove
+<spare	mkspare,spares
+<vlan	setvlan,clrvlan,vlans

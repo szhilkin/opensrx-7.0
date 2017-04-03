@@ -1,0 +1,12 @@
+
+fn appupdate {
+	mkdir -p $kfs/srx
+
+	# cec configuration
+	# shelf number
+	# rrfs
+	# /n/kfs/local/srlocal0?
+	# async
+	# forcesata2
+	# ratelimit
+}

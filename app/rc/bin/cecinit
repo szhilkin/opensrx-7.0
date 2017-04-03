@@ -1,0 +1,16 @@
+#!/bin/rc
+
+rfork e
+
+sh=`{cat /n/kfs/srx/shelf >[2]/dev/null}
+if (! ~ $#sh 0)
+	set shelf $sh >/dev/cecctl
+
+cfg=/n/kfs/srx/ceccfg
+if (test -s $cfg) {
+	echo Starting CEC on:
+	sed <$cfg 's/^/	/g'
+	sed <$cfg 's/^/cecon /g' | {
+		while (m=`{read}) set $"m >/dev/cecctl
+	}
+}

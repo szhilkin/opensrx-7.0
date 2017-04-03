@@ -1,0 +1,13 @@
+KZERO=0x80000000
+KENTRY=0x80100020
+APBOOTSTRAP=0x80003000
+
+SRXFILES=`{../port/mkfilelist MKFRAGDIR}
+
+^($SRXFILES)\.$O:R:	MKFRAGDIR/\1.c
+	$CC $CFLAGS -I. MKFRAGDIR/$stem1.c
+
+^($SRXFILES)\.acid:R:	MKFRAGDIR/\1.c
+	$CC $CFLAGS -a MKFRAGDIR/$stem1.c >$stem1.acid
+
+ACID=$ACID $app/src/9/devsr.c

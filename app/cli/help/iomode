@@ -1,0 +1,16 @@
+The iomode command displays the read access pattern optimization setting for configured LUNs. When set to sequential, a LUN is optimized for sequential reads using a prefetch mechanism. When set to random a LUN is optimized for random read workloads by disabling prefetch.  The default I/O mode for supported RAID types differs whether the LUN is comprised of all SSD drives versus spinning drives as follows:
+
+RAID type    Spinning default    SSD default
+--------------------------------------------
+jbod         sequential          random
+raid0        sequential          random
+raid1        random              random
+raid10       random              random
+raid5        sequential          sequential
+raid6rs      sequential          sequential
+
+RAID types raid5 and raid6rs do not currently support random iomode.
+
+If no LUNs are specified, the iomode state of all LUNs on the shelf are displayed.
+
+I/O mode may be changed with the setiomode command (see 'help setiomode').

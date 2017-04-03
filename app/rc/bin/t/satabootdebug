@@ -1,0 +1,38 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork en
+
+z=`{basename $0}
+fn usage {
+	echo >[1=2] usage: $z '[ on | off ]'
+	exit usage
+}
+
+9fat:
+f=/dev/sdC0/conf0
+dbg=off
+
+if (grep '*srsatadebug' $f >/dev/null)
+	dbg=on
+
+switch ($#*) {
+case 0
+	echo satabootdebug is $dbg
+case 1
+	switch ($1) {
+	case [Oo][Nn]
+		if (~ $dbg off)
+			echo '*srsatadebug=on' >>$f
+	case [Oo][Ff][Ff]
+		if (~ $dbg on)
+			echo '/\*srsatadebug/d
+				w
+				q' | ed $f >dev/null >[2=1]
+	case *
+		usage
+	}
+case *
+	usage
+}

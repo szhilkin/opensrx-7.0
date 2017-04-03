@@ -1,0 +1,18 @@
+The lunreservations command displays the reservations for all LUNs.  The display list can be restricted by providing one or more LUN arguments.  The displayed status includes the LUN number, the reservation type (see below), the key of current owner (if any), the list of registered keys and the MAC addresses associated with the keys.
+
+Reservations can be of the following type (see Section 3.5 of the AoE specification)
+	RType 0: Reservation owner has exclusive read/write access.
+	RType 1: Reservation owner has exclusive write access. Everyone has read-only access.
+	RType 2: Only a single registrant (owner) can have exclusive read/write access.
+	RType 3: Only a single registrant (owner) can have exclusive write access. Everyone has read-only access.
+	RType 4: All registrants have read/write access.
+	RType 5: All registrants have write access. Everyone else has read-only access.
+
+Unkeyed reservations (see section 3.4 of the AoE Specification) are also displayed. The Rtype for unkeyed reservations is 0 and no keys are displayed for owner or registrants.
+
+Note: Keyed and Unkeyed reservations cannot both be used on the same LUN.
+
+The lunreserverations command can also be used to clear the reservations by providing -c argument prior to LUN specification.
+
+Series ranging (see 'help series') may be used to specify LUNs:
+  lunreservations 00-10

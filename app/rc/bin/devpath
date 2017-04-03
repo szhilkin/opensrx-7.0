@@ -1,0 +1,51 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+# Shelf processing goo to help enforce shelf.slot naming scheme for devices.
+# Any bad arg causes immediate error.  By default we return a path to the
+# data file.  If -c is specified, we return path to the ctl file.
+
+rfork e
+
+rd=/raiddev
+
+fn usage{
+	echo >[1=2] usage: devpath [ -c ] shelf.slot ...
+	exit usage
+}
+
+file=data
+if (~ $1 -c) {
+	file=ctl
+	shift
+}
+if(~ $1 -f){
+	file=$2
+	*=$*(3-)
+}
+if (~ $#* 0)
+	usage
+
+shelf=`{ shelf }
+if (~ $shelf "unset") {
+	echo >[1=2] error: shelf address is unset
+	exit noshelf
+}
+
+paths=()
+for (d) {
+	spec=`{ echo $d | sed 's!^'^$shelf^'\.!!' }
+	slot=`{ echo $spec | sed 's!:[frc]$!!' }
+	p = `{ echo $spec | 
+		sed -e '/^missing$/b' \
+			-e '/:/s!([0-9]+)(:[rfc])!'^$rd^'/\1/'^$file^'\2!' \
+			-e '/^[^:]*$/s!.*!'^$rd^'/&/'^$file^'!' }
+	if (! ~ $spec missing) {
+		if (! grep 'state:.*up' $rd/$slot/stat >/dev/null >[2=1]) {
+			echo error: disk $d missing >[1=2]	
+			exit missing
+		}
+	}
+	paths=($paths `{cleanname $p})
+}
+echo $"paths

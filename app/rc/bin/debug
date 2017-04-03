@@ -1,0 +1,27 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+sr=/raid
+rd=/raiddev
+
+z=`{basename $0}
+fn usage {
+	echo >[1=2] usage: /$z '[ on | off ]'
+	exit usage
+}
+
+switch ($#*) {
+case 0
+	grep debug $sr/ctl $rd/ctl
+case 1
+	switch ($1) {
+	case on off
+		echo debug $1 >$sr/ctl
+		echo debug $1 >$rd/ctl
+	case *
+		usage
+	}
+case *
+	usage
+}

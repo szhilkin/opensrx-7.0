@@ -1,0 +1,52 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+# remove lun
+#
+# this script should only be invoked through the prosthesis filesystem.
+# do not invoke this script directly from the command line.
+# it similar to but not quite the same as the remove command.
+
+rfork e
+
+sr=/raid
+
+# save config.  eject uses this to unload the lun without losing config.
+sflag=()
+if (~ $1 '-s') {
+	sflag=-s
+	shift
+}
+
+if (~ $#* 0 || ~ $1 '-?')
+	exit 'usage; remove lun ...'
+
+luns=()
+while (! ~ $#* 0) {
+	glun=`{glob0 $1}
+	for (lun in $glun) {
+		if (test -w $sr/$lun/ctl) {
+			stat=`{cat $sr/$lun/stat | awk '{print $2}'}
+			if (~ $stat 'online')
+				exit 'lun '$lun' online'
+			if not
+				luns=($luns $lun)
+		}
+		if not
+			exit 'lun '$lun' not found'
+	}
+	shift
+}
+
+if (~ $#luns 0)
+	exit
+
+for (lun in $luns)
+	set stopallraid >$sr/$lun/ctl
+sync
+if (! ~ $#sflag 0) {
+	set markclean >$sr/ctl
+	save
+}
+for (lun in $luns)
+	set remove $sflag >$sr/$lun/ctl

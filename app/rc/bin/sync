@@ -1,0 +1,14 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+sr=/raid
+
+z=`{basename $0}
+if (! ~ $#* 0 || ~ $1 '-?') {
+	echo >[1=2] usage: /$z
+	exit usage
+}
+set sync >$sr/ctl

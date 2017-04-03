@@ -1,0 +1,60 @@
+
+rrfs - Reserve/Release File System
+
+usage: rrfs [-Dd] [-s srvname] [-m mtpt] file
+
+Rrfs is a 9P file service which manages AoE keyed reserve/release state as
+defined by version 1.2 of the AoE specification (February 2011).  It can be
+used to support legacy AoE reservations, however emphasis has been made to
+support persistence over traditionally volatile storage.
+
+The -D, -s, and -m flags control file system behavior consistent with other
+lib9p implementations (see ramfs(4)).  The -d flag enables trace logging.  
+The required file argument defines a persistent state file.
+
+Every effort has been made to ensure the state file remains consistent at
+all times.  Rrfs performs journaling when writing the state file.  A journal
+will be created in the same directory with a `.jrn' extension.  Once state
+has been properly recorded, the journal will replace the original state file.
+Rrfs will attempt to repair a missing state file from its journal at startup
+if possible.  If persistence is not desired, it is suggested that the state
+file reside on a ramfs(4) file system.
+
+Rrfs exports a single level of directories which identify a LUN.  LUN
+directories are automatically created similar to mntgen(4).  Each LUN
+directory contains three files: ctl, macs, and stat.
+
+The ctl file is used for sending the following commands:
+
+register key mac...
+	Registers (or unregisters) one or more MAC addresses with the
+	specified registration key.
+
+reserve rtype key
+	Creates (or removes) a reservation with the specified RType and
+	registration key.
+
+replace rtype tkey rkey
+	Replaces the target registration key (tkey) with the specified
+	replacement key (rkey).  If the target key is the current
+	reservation holder, the RType will be updated as well.
+
+reset
+	Clears all state associated with the LUN.
+
+The macs file outputs the filtering criteria for processing AoE commands.  The
+fields provided are: write exclusivity (1) and one or more MAC addresses.  An
+empty file indicates no reservation is active.
+
+The stat file outputs the current state of the LUN.  The fields provided
+are: RType (1), generation count (2), reservation key (3), and zero or more
+registration keys associated with the LUN.
+
+Legacy reservations may be managed using a single registration key
+(ffffffffffffffff by convention) and a reservation type (RType) of 0.  The
+AoE specification does not define storage requirements for legacy reservations,
+however at the time of this writing, the persistent nature of rrfs is seen
+as a valid extension (i.e. persistence need not be optional).
+
+Steven Stallion
+February 2011

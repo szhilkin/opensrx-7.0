@@ -1,0 +1,22 @@
+# srx enviro file
+
+fn appenvinit {
+	switch ($model) {
+		case SRX62* SRX63* 
+			ipmifs >/dev/null >[2=1]
+			waitfile /srv/ipmi
+		case *
+			smbfs >/dev/null >[2=1]
+			waitfile /srv/smb
+	}
+}
+
+fn envirofsinit {
+	switch ($model) {
+		case SRX62* SRX63*
+			envirofs -s enviro -i
+		case *
+			envirofs -s enviro		
+	}
+	waitfile /srv/enviro
+}

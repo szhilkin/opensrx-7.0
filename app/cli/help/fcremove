@@ -1,0 +1,1 @@
+The fcremove command removes drives from the EtherFlash Cache.  EtherFlash Cache provides a read cache mechanism, which enhances read-intensive I/O operations.

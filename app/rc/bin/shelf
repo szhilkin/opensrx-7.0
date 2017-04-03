@@ -1,0 +1,65 @@
+#!/bin/rc
+# Copyright © 2013 Coraid, Inc.
+# All rights reserved.
+#
+
+rfork e
+
+sr=/raid
+proshelf=/n/prosthesis/shelf
+force=0
+luns=0
+fn usage {
+	echo >[1=2] usage: shelf '[shelfno]'
+	exit usage
+}
+
+switch ($#*) {
+case 0
+	cat $proshelf
+	exit shelf
+case 1
+	if(~ $1 '-?')
+		usage
+	sh = $1
+
+case 2
+	if (~ $1 '-f')
+		force = 1
+	if not
+		usage
+	sh = $2
+case *
+	usage
+}
+if(! ~ $sh `{echo $sh | sed 's/[^0-9]//g'} || test $sh -gt 65534){
+	echo >[1=2] error: invalid shelf number $1 '[0-65534]'
+	exit badarg
+}
+if(~ $sh 0* && ! ~ $sh 0){
+	echo >[1=2] error: invalid shelf number $1 preceded with zeros
+	exit badarg
+}
+for (lun in $sr/[0-9]*) {
+	if (test -w $lun/ctl) {
+		luns = 1
+		stat=`{cat $lun/stat | awk '{print $2}'}
+		if (~ $stat online){
+			echo >[1=2] error: cannot change shelf address with online LUNs
+			exit onlineluns
+		}
+	}
+}
+if (~ $force 0 && ~ $luns 1) {
+	echo >[1=2] Changing the shelf address will migrate all defined LUNs
+	echo >[1=2] to the new shelf address. LUNs used by other appliances
+	echo >[1=2] may not function correctly after re-addressing.
+	echo >[1=2] Are you sure you want to perform this action?
+	echo >[1=2] -n ''''n'''' to cancel, or ''''y'''' to change '[N]:'
+
+	if (! ~ `{read} [Yy]) {
+			exit abort
+	}
+}
+echo $sh > $proshelf
+

@@ -1,0 +1,33 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+zero=`{basename $0}
+fn usage {
+	echo >[1=2] usage: $zero [ -rw ] shelf.slot ...
+	exit usage
+}
+if (~ $1 '-?')
+	usage
+opts=()
+while (~ $1 -*) {
+	opts=($opts $1)
+	shift
+}
+if (~ $#opts 0)
+	usage
+devs=()
+for (i) {
+	a = `{glob $i} || { echo error: bad device syntax $i >[1=2]; exit 1 }
+	devs=($devs $a)
+}
+# check and throw away
+devices = `{ devpath $devs } || exit baddevs
+
+for (d in $devs) {
+	echo Testing $d ...
+	dt $opts `{devpath $d}
+}
+

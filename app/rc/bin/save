@@ -1,0 +1,11 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+# this script is misguided.  Any actions that must save state in the
+# devsr namespace should have a mechanism where the namespace control
+# blocks until the save is complete to permit exported namespaces to
+# have the same sanity as the cli.
+
+set save >[2]/dev/null >/raid/ctl
+status=''

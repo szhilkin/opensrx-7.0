@@ -1,0 +1,1 @@
+The when command lists LUNS in either an initializing or recovering state. The information displayed for each LUN includes percentage complete, I/O rate, and estimated time to completion.

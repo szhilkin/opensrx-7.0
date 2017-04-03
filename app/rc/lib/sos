@@ -1,0 +1,7 @@
+
+sosname=`{
+	s=`{cat /n/kfs/srx/shelf >[2]/dev/null}
+	if (~ $#s 0)
+		s=unset
+	echo $model^_$ipaddr^_$s^_$date.txt
+}

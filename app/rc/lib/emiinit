@@ -1,0 +1,23 @@
+
+fn appemi-diskstress {
+	m=/raiddev
+	bind '#‡' $m
+	for (d in $m/*/data) {
+		if (~ $d $m'/*/data')
+			echo >[1=2] warning: no disks found, skipping disk test
+		if not
+			{emi-diskstress $d &}
+	}
+}
+
+fn appemi-cmstress {
+	if (test -e /dev/sdS0/ctl)
+		{emi-cmstress &}
+	if not
+		echo >[1=2] No CacheMotion card found: skipping CacheMotion test
+}
+
+fn appemi {
+	appemi-diskstress
+	appemi-cmstress
+}

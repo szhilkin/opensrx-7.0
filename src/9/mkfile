@@ -1,0 +1,6 @@
+DIR=$coros/src/9/pc
+
+all:VQ:
+
+%:VQ:
+	@{builtin cd $DIR && mk $target CONF'='$CONF}

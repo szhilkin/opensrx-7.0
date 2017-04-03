@@ -1,0 +1,8 @@
+
+fn appdumpsdata {
+	stacks -k netread
+	stacks -k lbworker
+	stacks -k dproc
+	stacks -k mpt2
+	stacks -k odin
+}

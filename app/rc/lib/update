@@ -1,0 +1,39 @@
+
+fn usage {
+	echo >[1=2] usage: $z '[ name.tarc ]'
+	exit usage
+}
+
+fn appupload {
+	echo SRX update can be performed using AoE LUN update, or file
+	echo based update via IP upload.
+	echo
+	echo In order to perform an AoE update, create an update LUN and
+	echo write the update file to the update LUN.  Once uploaded,
+	echo run "update".  This updates using the contents of the update LUN.
+	echo
+	echo For file based update, assign an IP to the SRX, enable a file
+	echo upload service, and upload a file as follows.
+	echo
+}
+
+fn appcheck {
+	switch ($updfile) {
+	case ''
+		nsupd=/n/sys/config/update
+		lun=()
+		tarcimg=()
+		for (f in /raid/[0-9]*/raidstat) {
+			if (grep -s $nsupd $f >[2]/dev/null)
+				lun=`{ sed 1q $f | awk -F. '{print $1}' }
+		}
+		tarcimg=`{file -c $nsupd | grep 'tar archive'}
+		if (~ $#lun 0 || ~ $#tarcimg 0)
+			updfile=()
+		if not
+			updfile=$nsupd
+	case *.tarc
+	case *
+		usage
+	}
+}

@@ -1,0 +1,1 @@
+The flushcachedisable command disables ATA SYNCHRONIZE CACHE on one or more specified SRX LUNs. This means LUN does not perform explicit synchronization when such commands are received at target. By default LUNs will have flushcache disabled. This command reverses the action executed by flushcacheenable command on SRX LUNs.

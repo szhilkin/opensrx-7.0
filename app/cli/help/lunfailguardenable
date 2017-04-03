@@ -1,0 +1,1 @@
+The lunfailguardenable command enables lunfailguard on the specified LUNs.  The SRX will attempt to predictively fail a drive that has experienced a SMART threshold exceeded condition.  When lunfailguard is enabled, it protects against a drive being failed predictively if such a failure would result in the LUN becoming failed.  The default value for lunfailguard is 'on'.

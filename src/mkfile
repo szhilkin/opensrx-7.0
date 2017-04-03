@@ -1,0 +1,9 @@
+<$app/src/mkhdr
+
+# mkcmd is used for DIRS processing; no cmd is relevant in src
+<$coros/src/mkcmd
+
+# libraries first, then support dirs, but skip the kernel
+DIRS=\
+	libsrxcmds\
+	cmd\

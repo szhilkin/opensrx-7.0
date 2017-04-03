@@ -1,0 +1,1 @@
+The setvlan command associates a LUN with an IEEE 802.1Q vlan id. The association limits the LUN to communication with a single vlan id. Multiple LUNs may be associated with a single vlan id. A valid vlan id is a number inclusively between 1 and 4094.

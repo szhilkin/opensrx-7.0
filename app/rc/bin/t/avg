@@ -1,0 +1,13 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+{ for (i in `{seq 0 9}) { when ; sleep 1 } } | \
+	awk 'BEGIN { ll = 0 }
+		{
+		if (ll == 0) printf "%s ", $2
+		else printf "%s + ", $2
+		ll = 1
+		}
+		END { printf "%d /p", NR }
+	' | dc

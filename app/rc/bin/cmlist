@@ -1,0 +1,17 @@
+#!/bin/rc
+
+rfork e
+
+sr=/raid
+
+if (! ~ $#* 0) {
+	echo 'usage: cmlist'
+	exit usage
+}
+
+if (! test -e '#S/sdS0') {
+	echo 'error: no CacheMotion card' >[1=2]
+	exit 'no cache'
+}
+
+cat $sr/cachelist

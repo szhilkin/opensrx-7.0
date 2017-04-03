@@ -1,0 +1,24 @@
+
+sr=/raid
+
+# stop aoe processing
+echo stopallether >$sr/ctl
+
+# stop each lun
+re=$sr'/*/ctl'
+luns=(`{eval echo $re})
+if (! ~ $luns $re) {
+	for (lun in $luns) {
+		set offline >$lun
+		set stopallraid >$lun
+	}
+}
+
+# sync buffer cache
+sync
+
+# mark raid devices as cleanly shut down
+set markclean >$sr/ctl
+
+# save disk config, blocking until complete
+save

@@ -1,0 +1,12 @@
+
+fn appsosdata {
+	rd=/raiddev
+	sr=/raid
+
+	catsos $rd/^(ctl stat)
+	catsos $rd/*/^(ctl iostats led) >[2]/dev/null
+	catsos $sr/^(ctl stat spares bufstats)
+	catsos $sr/*/^(ctl stat raidstat masks iomode config magic model serial reslist iostats label vlan)
+	exesos drives -j
+	exesos cecstat -j
+}

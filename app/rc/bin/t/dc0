@@ -1,0 +1,43 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+sr=/raid
+
+# data collection script.  We output data to stdout that
+# will be collected over serial console to a program 
+# that will timestamp all messages to track throughput
+# rates.
+
+sh=62
+
+fn snap {
+	bail=0
+	while (~ $bail 0 && sleep 1) {
+		f=`{grep 'degraded|initing' $sr/0/raidstat}
+		if (~ $#f 0)
+			bail=1
+		if not
+			echo $f
+	}
+}
+
+# eliminate sample smoothing by forcing the samples
+# to be smoothed over 1 sample (the last).
+echo nsamples 1 >$sr/ctl
+
+# first, let's do a parity initialization.
+remove 0
+make 0 raid5 $sh.0-15
+snap
+
+sleep 3
+
+# now, lets track disk rebuilding
+
+remove 0
+make 0 raid5 $sh.0-14 $sh.15:r
+snap
+

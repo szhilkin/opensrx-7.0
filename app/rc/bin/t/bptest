@@ -1,0 +1,12 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+echo Backplane Communication Test
+echo 'Alarm on (alarm should be audible)'
+alarm on || exit failure
+sleep 2
+echo 'Alarm off (alarm should be silent)'
+alarm reset || exit failure
+sleep 1
+

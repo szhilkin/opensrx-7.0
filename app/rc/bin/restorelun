@@ -1,0 +1,28 @@
+#!/bin/rc
+# Copyright © 2013 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+fn usage {
+	echo usage: restorelun '[ -l ] [ oldshelfno [ oldlun [ newlun ] ] ]' >[2=1]
+	exit usage
+}
+
+lflag=()
+if (~ $1 '-l') {
+	lflag=notempty
+	shift
+}
+
+if (~ $1 '-?')
+        usage
+
+for (i)
+        if (! ~ $i `{echo $i | sed 's/[^0-9]//g'})
+               usage
+
+if (~ $#lflag 0)
+	rrestore $* | rc
+if not
+	rrestore $*

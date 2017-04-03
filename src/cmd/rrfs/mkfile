@@ -1,0 +1,6 @@
+<$app/src/mkhdr
+
+TARG=	rrfs
+HFILES=	list.h
+
+<$coros/src/mkcmd

@@ -1,0 +1,18 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+mon=/raid/dstate
+trace=/tmp/diskledmon
+
+cat $mon | while (m=`{read}) {
+	p=`{echo $m(1) | sed 's:^.*/([0-9]+)/data$:\1:'}
+	if (~ $p [0-9]*){
+		test -f $trace && echo setslotled  . $m(2) . $p >>$trace
+		e = `{setslotled $m(2) $p}
+		if (! ~ $#e 0)
+		 	syslogtest diskledmon: unable to automatically trigger ''''setslotled $m(2) $p''''
+	}
+}

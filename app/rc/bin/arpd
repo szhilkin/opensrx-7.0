@@ -1,0 +1,35 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+d=/tmp/arp
+noarp=5
+i=0
+
+while(){
+	ip=`{ syslog -p | awk -F: '/destination IP/ { print $2 }' }
+	e=`{ syslog -p | awk -F: '/local interface/ { print $2 }' }
+	af=$d/^$ip
+	taf=$af.tmp
+
+	mkdir -p $d
+
+	if (! test -r $af) {
+		touch $af
+		chmod +l $af
+	}
+	arp $e $ip >[2]/dev/null >$taf
+	if (! ~ `{wc -l $taf} 0)
+		cat $taf >$af >[2]/dev/null
+	if not {
+		i=`{echo $i 1 +p | dc}
+		if (~ $i $noarp) {
+			echo -n >$af >[2]/dev/null
+			i=0
+		}
+	}
+	rm $taf
+	sleep 60 arpd
+}

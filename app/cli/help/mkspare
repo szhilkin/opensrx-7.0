@@ -1,0 +1,2 @@
+The mkspare command adds a drive to the spare pool.  If a drive fails in a RAID 1, RAID 5, RAID 6, or RAID 10 LUN, the SRX attempts to recruit a drive from the spare pool to replace it. 
+

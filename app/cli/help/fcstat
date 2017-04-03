@@ -1,0 +1,1 @@
+The fcstat command displays throughput and latency information for the drives configured as part of the EtherFlash Cache. The MB/s, average latency, and maximum latency for reads and writes are displayed.

@@ -1,0 +1,29 @@
+#!/bin/rc
+# Copyright © 2010 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+sr=/raid
+cfg=/n/kfs/srx/async
+
+fn usage {
+	echo 'usage: async [ on | off ]' >[1=2]
+	exit usage
+}
+
+if (~ $1 '-?')
+	usage
+
+if (~ $#* 0) {
+	grep async $sr/ctl
+	exit
+}
+
+switch ($1) {
+case on off
+	set async $1 >$sr/ctl
+	set $1 >$cfg
+case *
+	usage
+}

@@ -1,0 +1,45 @@
+#!/bin/rc
+# Copyright © 2012 Coraid, Inc.
+# All rights reserved.
+
+rfork e
+
+rd=/raiddev
+
+fn usage {
+	echo >[1=2] usage: /erase [-f]
+	exit usage
+}
+
+force=0
+while (~ $1 -*) {
+	switch ($1) {
+	case -f
+		force=1
+	case -*
+		usage
+	}
+	shift
+}
+
+if (~ $force 0) {
+	echo warning: erase will destroy all data on all drives.  This operation
+	echo '	'cannot be reversed.
+	echo -n Would you like to erase everything? 'y/n? [N] '
+	if (! ~ `{read} [Yy])
+		exit noerase
+}
+
+#
+# Zero out each disk in parallel for efficiency.  Once the disk is
+# erased, a SECURITY ERASE is issued to reset internal state if the
+# disk happens to be an SSD.  Otherwise, wait for failure/timeout.
+#
+for (d in `{ls -d $rd/[0-9]*}) {
+	{
+		dd -if /dev/zero -of $d/data -bs 1048576
+		secureerase -f `{shelf}.`{basename $d}
+	}&
+}>[2]/dev/null
+wait
+exit ''

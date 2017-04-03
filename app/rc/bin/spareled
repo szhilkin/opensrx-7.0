@@ -1,0 +1,30 @@
+#!/bin/rc
+
+z=`{basename $0}
+
+fn usage {
+	echo usage: /$z '[enable|disable]' >[1=2]
+	exit usage
+}
+
+v=echo
+while(! ~ $#* 0){
+	switch($1){
+	case enable disable
+		v=$1
+	case *
+		usage
+	}
+	shift
+}
+
+switch($v){
+case echo
+	ledctl | sed 's/spare[ 	]+//
+		s/on/enable/
+		s/off/disable/'
+case enable
+	ledctl -s on
+case disable
+	ledctl -s off
+}

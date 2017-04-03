@@ -1,0 +1,6 @@
+The mask command displays MAC address masks for all LUNs.  The display list can be restricted by providing one or more LUN arguments.  The displayed status includes LUN and mask list.
+
+The mask command also modifies mask lists by providing +MAC and -MAC arguments prior to LUN specification.  To add a MAC address, prefix the MAC address with a plus (+). To remove a MAC address, prefix the MAC address with a minus (-). 
+
+Series ranging (see 'help series') may be used to specify LUNs:
+  mask +001004010203 -001004040506 00-10

@@ -1,0 +1,92 @@
+#!/bin/rc
+
+rfork en
+
+sr=/raid
+flash=/n/kfs/srx/ledcfg
+list=()
+action=()
+new=()
+t=()
+rflag=()
+settings=(spare off)
+
+fn usage{
+	echo >[1=2] 'usage: ledctl [-r] [-s on/off]'
+	exit usage
+}
+
+fn changeconf{
+	new=()
+	while(! ~ $#list 0){
+		if(~ $list(1) $1){
+			new=($new $1 $2)
+			*=$*(3-)
+		}
+		if not
+			new=($new $list(1-2))
+		list=$list(3-)
+	}
+	list=($new $*)
+}
+
+fn findconf{
+	new=()
+	t=$list
+	while(! ~ $#t 0){
+		if(~ $t(1) $1)
+			new=$t(1-2)
+		t=$t(3-)
+	}
+}
+
+if(test -f $flash)
+	list=`{cat $flash}
+while(! ~ $#* 0){
+	switch($1){
+	case '-r'
+		rflag=1
+		action = ($action r)
+		*=$*(2-)
+	case '-s'
+		arg = `{echo $2 | tr 'A-Z' 'a-z'}
+		if(! ~ $arg on off)
+			usage
+		changeconf spare $arg
+		action = ($action s)
+		*=$*(3-)
+	case *
+		usage
+	}
+}
+
+while(! ~ $#settings 0){
+	findconf $settings(1)
+	if(~ $#new 0)
+		changeconf $settings(1-2)
+	settings=$settings(3-)
+}
+
+if(~ r $action){
+	if(! ~ $#action 1)
+		usage
+	while(! ~ $#list 0){
+		set ledcfg $list(1-2) > $sr/ctl
+		list=$list(3-)
+	}
+	~ 0 0
+	exit
+}
+
+if(~ $#action 0)
+	flash=/fd/1
+{
+	while(! ~ $#list 0){
+		set $list(1) ^ '	' ^ $list(2)
+		list=$list(3-)
+	}
+} | sort > $flash
+
+if(! ~ $#action 0)
+	$0 -r
+

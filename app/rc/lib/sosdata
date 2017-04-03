@@ -1,0 +1,30 @@
+
+fn appsosdata {
+	rd=/raiddev
+	sr=/raid
+
+	exesos shelf
+	exesos cecstat
+	exesos iomode
+	exesos vlans
+	exesos mask
+	exesos lunreservations
+	catsos /n/kfs/srx/rrfs >[2]/dev/null
+	exesos drives -c
+	exesos drives -a
+	exesos luns -a
+	exesos lunfailguard
+	exesos when
+	echo
+	echo NVWC
+	if (test -e '#S/sdS0') {
+		exesos cmstat
+		exesos cmlist
+		catsos '#S/sdS0/ctl' >[2]/dev/null
+	}
+	echo EtherFlash Cache
+#	exesos fcstat
+	exesos drives -S
+#	exesos fclunstat
+#	exesos cmcheck
+}
